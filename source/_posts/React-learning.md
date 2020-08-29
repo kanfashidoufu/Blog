@@ -9,6 +9,7 @@ tags:
 - 学习笔记
 - ES6
 - React
+header_image: /intro/react.jpg
 ---
 
 # 开发环境搭建

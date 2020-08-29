@@ -7,6 +7,7 @@ date: 2019-11-06 17:18:36
 tags:
 - 学习笔记
 - TypeScript
+header_image: /intro/typescript.jpg
 ---
 
 # TypeScript-Learning
@@ -17,15 +18,15 @@ Learning TypeScript from the begining
 
 安装 TypeScript
 
-```
+``` bash
 npm i typescript --save-dev
 ```
 
 在 package.json 中添加 TypeScript 编译指令
 
-```
+```json
 "scripts": {
-    "tsc": "tsc
+    "tsc": "tsc"
 }
 ```
 
@@ -33,7 +34,7 @@ tsc 是 TypeScript 的编译器，将 TypeScript 编译为 JavaScript。
 
 生成 TypeScript 配置文件`tsconfig.json`
 
-```
+``` bash
 npm run tsc -- --init
 ```
 
@@ -41,7 +42,7 @@ npm run tsc -- --init
 
 生成的配置项有很多，我们先使用其中个别配置，先将`tsconfig.json`中配置为以下内容：
 
-```
+```json
 {
   "compilerOptions": {
     "target": "es5",
@@ -70,7 +71,7 @@ TypeScript 支持与 JS 几乎相同的数据类型，此外，TypeScript 自己
 
 在项目文件夹中创建一个名为 `filterByTerm.js` 的新文件，并输入以下内容
 
-```
+```js
 function filterByTerm(input, searchTerm) {
   if (!searchTerm) throw Error("searchTerm 不能为空")
   if (!input.length) throw Error("input 不能为空")
@@ -91,13 +92,13 @@ filterByTerm("input string", "java")
 
 确定哪个地方错：
 
-```
+``` bash
 npm run tsc
 ```
 
 可以看到控制台报错：
 
-```
+``` bash
 > tsc
 
 filterByTerm.ts:8:23 - error TS7006: Parameter 'input' implicitly has an 'any' type.
@@ -132,14 +133,14 @@ TypeScript 告诉你错误是参数隐式具有`any`类型。它可以是 TypeSc
 
 除了 Object 类型外，其它是 JS 的基本数据类型。每种 JS 类型都有相应的表示，可以代码中使用，比如字符串和数字
 
-```
+```js
 let name = "Hello John"
 let age = 33
 ```
 
 JS 的问题是，变量可以随时更改其类型。例如，布尔值可以变成字符串(将以下代码保存到名为`types.js`的文件中)
 
-```
+```js
 let aBoolean = false
 console.log(typeof aBoolean) // "boolean"
 
@@ -155,7 +156,7 @@ console.log(typeof aBoolean) // "string"
 
 types.ts 的编译控制台会报错：
 
-```
+``` bash
 type.ts:11:1 - error TS2322: Type '"Tom"' is not assignable to type 'boolean'.
 
 11 aBoolean = "Tom"
@@ -168,13 +169,13 @@ type.ts:11:1 - error TS2322: Type '"Tom"' is not assignable to type 'boolean'.
 
 TypeScript 强调有类型，咱们上面的代码根本没有类型，是时候添加一些了。首先要修正函数参数。通过观察这个函数是如何调用的，它似乎以两个字符串作为参数:
 
-```
+```js
 filterByTerm("input string", "java")
 ```
 
 为参数添加类型：
 
-```
+```js
 function filterByTerm(input: string, searchTerm: string) {
     // ...
 }
@@ -184,13 +185,13 @@ function filterByTerm(input: string, searchTerm: string) {
 
 接着编译：
 
-```
+``` bash
 npm run tsc
 ```
 
 剩下的错误：
 
-```
+``` bash
 filterByTerm.ts:12:18 - error TS2339: Property 'filter' does not exist on type 'string'.
 
 12     return input.filter(function (arrayElement) {
@@ -199,7 +200,7 @@ filterByTerm.ts:12:18 - error TS2339: Property 'filter' does not exist on type '
 
 可以看到 TypeScript 是如何指导我们，现在的问题在于 `filter` 方法。
 
-```
+```js
 function filterByTerm(input: string, searchTerm: string) {
   // 省略一些
   return input.filter(function(arrayElement) {
@@ -212,7 +213,7 @@ function filterByTerm(input: string, searchTerm: string) {
 
 为此，有两个选择。选项 1：`string[]`
 
-```
+```js
 function filterByTerm(input: string[], searchTerm: string) {
     // ...
 }
@@ -220,7 +221,7 @@ function filterByTerm(input: string[], searchTerm: string) {
 
 选项 2: `Array<Type>`
 
-```
+```js
 function filterByTerm(input: Array<string>, searchTerm: string) {
     // ...
 
@@ -229,7 +230,7 @@ function filterByTerm(input: Array<string>, searchTerm: string) {
 
 我个人更喜欢选项 2。 现在，尝试再次编译（`npm run tsc`），控制台信息如下：
 
-```
+``` bash
 filterByTerm.ts:17:14 - error TS2345: Argument of type '"input string"' is not assignable to parameter of type 'string[]'.
 
 17 filterByTerm("input string", "java")
@@ -238,13 +239,13 @@ filterByTerm.ts:17:14 - error TS2345: Argument of type '"input string"' is not a
 
 TypeScript 还会校验传入的类型。 我们将 input 改为字符串数组：
 
-```
+```js
 filterByTerm(["string1", "string2", "string3"], "java")
 ```
 
 这是到目前为止的完整代码：
 
-```
+```js
 function filterByTerm(input: Array<string>, searchTerm: string) {
     if (!searchTerm) throw Error("searchTerm 不能为空")
     if (!input.length) throw Error("input 不能为空")
@@ -259,7 +260,7 @@ filterByTerm(["string1", "string2", "string3"], "java")
 
 看上去很好，但是，编译（npm run tsc）还是过不了：
 
-```
+``` bash
 filterByTerm.ts:13:29 - error TS2339: Property 'url' does not exist on type 'string'.
 
 13         return arrayElement.url.match(regex)
@@ -268,7 +269,7 @@ filterByTerm.ts:13:29 - error TS2339: Property 'url' does not exist on type 'str
 
 TypeScript 确实很严谨。 我们传入了一个字符串数组，但是在代码后面，尝试访问一个名为 “url” 的属性：
 
-```
+```js
 return arrayElement.url.match(regex)
 ```
 
@@ -278,7 +279,7 @@ return arrayElement.url.match(regex)
 
 上面遗留一个问题：因为 filterByTerm 被传递了一个字符串数组。url 属性在类型为 string 的 TypeScript 上不存在。所以咱们改用传递一个对象数组来解决这个问题：
 
-```
+```js
 filterByTerm(
   [{ url: "string1" }, { url: "string2" }, { url: "string3" }],
   "java"
@@ -287,7 +288,7 @@ filterByTerm(
 
 函数定义也要对应的更改：
 
-```
+```js
 function filterByTerm(input: Array<object>, searchTerm: string) {
     // ...
 }
@@ -295,7 +296,7 @@ function filterByTerm(input: Array<object>, searchTerm: string) {
 
 现在让我们编译代码，控制台输出:
 
-```
+``` bash
 filterByTerm.ts:13:25 - error TS2339: Property 'url' does not exist on type 'object'.
 
 13     return arrayElement.url.match(regex)
@@ -310,7 +311,7 @@ filterByTerm.ts:13:25 - error TS2339: Property 'url' does not exist on type 'obj
 
 在 TypeScript 中，你可以用一个接口来定义这个模型，就像这样(把下面的代码放在 `filterByTerm.ts` 的顶部):
 
-```
+```ts
 interface ILink {
   url: string
 }
@@ -322,7 +323,7 @@ interface ILink {
 
 现在，使用使用接口 `ILink` 定义 `input` 类型
 
-```
+```ts
 function filterByTerm(input: Array<ILink>, searchTerm: string) {
     // ...
 }
@@ -330,7 +331,7 @@ function filterByTerm(input: Array<ILink>, searchTerm: string) {
 
 通过此修复，可以说 TypeScript **“期望 ILink 数组”** 作为该函数的输入，以下是完整的代码：
 
-```
+```ts
 interface ILink {
   url: string
 }
@@ -358,7 +359,7 @@ TypeScript 接口是该语言最强大的结构之一。接口有助于在整个
 
 前面，咱们定义了一个简单的接口 `ILink`
 
-```
+```ts
 interface ILink {
   url: string
 }
@@ -366,7 +367,7 @@ interface ILink {
 
 如果您想要向接口添加更多的字段，只需在块中声明它们即可：
 
-```
+```ts
 interface ILink {
   description: string
   id: number
@@ -376,7 +377,7 @@ interface ILink {
 
 现在，类型为 `ILink` 的对象都必须实现新字段，否则就会出现错误，如果把上面 的定义重新写入 `filterByTerm.ts` 然后重新编译就会报错了：
 
-```
+``` bash
 filterByTerm.ts:24:4 - error TS2739: Type '{ url: string }' is missing the following properties from type 'ILink': description, id
 
 24   [{ url: 'string1' }, { url: 'string2' }, { url: 'string3' }],
@@ -385,7 +386,7 @@ filterByTerm.ts:24:4 - error TS2739: Type '{ url: string }' is missing the follo
 
 问题在于我们函数的参数：
 
-```
+```js
 filterByTerm(
   [{ url: "string1" }, { url: "string2" }, { url: "string3" }],
   "java"
@@ -396,7 +397,7 @@ TypeScript 可以通过函数声明来推断参数是 `ILink` 的类型数组。
 
 大多数情况下，实现所有字段是不太现实的。毕竟，咱也不知道 `ILink` 类型的每个新对象是否会需要拥有所有字段。不过不要担心，要使编译通过，可以声明接口的字段可选，使用 `?` 表示：
 
-```
+```ts
 interface ILink {
     description?: string
     id?: number
@@ -408,7 +409,7 @@ interface ILink {
 
 ## 变量声明
 
-```
+```ts
 function filterByTerm(input: Array<ILink>, searchTerm: string) {
     //
 }
@@ -416,7 +417,7 @@ function filterByTerm(input: Array<ILink>, searchTerm: string) {
 
 `TypeScript` 并不限于此，当然也可以向任何变量添加类型。为了说明这个例子，咱们一一地提取函数的参数。首先咱要提取每一个单独的对象：
 
-```
+```js
 const obj1: ILink = { url: "string1" }
 const obj2: ILink = { url: "string2" }
 const obj3: ILink = { url: "string3" }
@@ -424,19 +425,19 @@ const obj3: ILink = { url: "string3" }
 
 接下来我们可以像这样定义一个 `ILink` 数组:
 
-```
+```ts
 const arrOfLinks: Array<ILink> = [obj1, obj2, obj3]
 ```
 
 参数 `searchTerm` 对应的类型可以这样：
 
-```
+```ts
 const term: string = "java"
 ```
 
 以下是完整的代码：
 
-```
+```ts
 interface ILink {
   description?: string
   id?: number
@@ -487,7 +488,7 @@ filterByTerm(arrOfLinks, term)
 
 该接口的字段其中有些，我们 `ILink` 接口都有了。
 
-```
+```ts
 interface ILink {
   description?: string
   id?: number
@@ -497,7 +498,7 @@ interface ILink {
 
 是否有办法重用接口 `ILink ?` 在 `TypeScript` 中，可以使用继承来扩展接口，关键字用 `extends` 表示：
 
-```
+```ts
 interface ILink {
   description?: string
   id?: number
@@ -527,7 +528,7 @@ const post1: IPost = {
 
 `JS` 对象是键/值对的容器。 如下有一个简单的对象:
 
-```
+```js
 const paolo = {
   name: "Paolo",
   city: "Siena",
@@ -537,13 +538,13 @@ const paolo = {
 
 我们可以使用点语法访问任何键的值:
 
-```
+```js
 console.log(paolo.city)
 ```
 
 现在假设键是动态的，我们可以把它放在一个变量中，然后在括号中引用它
 
-```
+```js
 const paolo = {
   name: "Paolo",
   city: "Siena",
@@ -557,7 +558,7 @@ console.log(paolo[key])
 
 现在咱们添加另一个对象，将它们都放到一个数组中，并使用`filter`方法对数组进行筛选，就像我们在 `filterByTerm.js` 中所做的那样。但这一次键是动态传递的，因此可以过滤任何对象键：
 
-```
+```js
 const paolo = {
   name: "Paolo",
   city: "Siena",
@@ -581,7 +582,7 @@ filterPerson([paolo, tom], "Siena", "city")
 
 这是比较重要的一行行
 
-```
+```js
 return person[key].match(term)
 ```
 
@@ -593,7 +594,7 @@ return person[key].match(term)
 
 让我们回到 `filterByTerm.ts` 中 `filterByTerm` 函数
 
-```
+```ts
 function filterByTerm(input: Array<ILink>, searchTerm: string) {
   if (!searchTerm) throw Error('searchTerm 不能为空')
   if (!input.length) throw Error('input 不能为空')
@@ -606,7 +607,7 @@ function filterByTerm(input: Array<ILink>, searchTerm: string) {
 
 它看起来不那么灵活，因为对于每个 `ILink`，咱们都使用硬编码方式将属性 `url` 与正则表达式相匹配。我们希望使动态属性(也就是键)让代码更灵活：
 
-```
+```ts
 function filterByTerm(
   input: Array<ILink>,
   searchTerm: string,
@@ -623,7 +624,7 @@ function filterByTerm(
 
 `lookupKey` 是动态键，这是给它分配了默认参数 `“url”`。 接着编译代码当然会报错：
 
-```
+``` bash
 filterByTerm.ts:37:12 - error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'ILink'.
   No index signature with a parameter of type 'string' was found on type 'ILink'.
 
@@ -635,7 +636,7 @@ filterByTerm.ts:37:12 - error TS7053: Element implicitly has an 'any' type becau
 
 转到接口 `ILink` 并添加索引：
 
-```
+```ts
 interface ILink {
   description?: string
   id?: number
@@ -648,7 +649,7 @@ interface ILink {
 
 不过，这样写会引发其它错误：
 
-```
+``` bash
 filterByTerm.ts:9:3 - error TS2411: Property 'description' of type 'string | undefined' is not assignable to string index type 'string'.
 9   description?: string
     ~~~~~~~~~~~
@@ -659,7 +660,7 @@ filterByTerm.ts:10:3 - error TS2411: Property 'id' of type 'number | undefined' 
 
 这是因为接口上的一些属性是可选的，可能是 `undefined`，而且返回类型不总是`string`(例如，id 是一个 `number`)。
 
-```
+```ts
 interface ILink {
   description?: string
   id?: number
@@ -670,7 +671,7 @@ interface ILink {
 
 表示该索引是一个字符串，可以返回另一个字符串、数字或 undefined。尝试再次编译，这里有另一个错误
 
-```
+``` bash
 filterByTerm.ts:38:36 - error TS2339: Property 'match' does not exist on type 'string | number'.
   Property 'match' does not exist on type 'number'.
 
@@ -679,7 +680,7 @@ filterByTerm.ts:38:36 - error TS2339: Property 'match' does not exist on type 's
 
 报的没毛病。`match` 方法只存在字符串中 ，而且我们的索引有可能返回一个 `number`。为了修正这个错误，我们可以使用 `any` 类型：
 
-```
+```ts
 interface ILink {
   description?: string
   id?: number
@@ -694,7 +695,7 @@ interface ILink {
 
 回到 `filterByTerm` 函数：
 
-```
+```ts
 function filterByTerm(
   input: Array<ILink>,
   searchTerm: string,
@@ -711,7 +712,7 @@ function filterByTerm(
 
 如果按原样调用，传递前面看到的 `ILink` 数组和搜索词`string3`，则如预期的那样返回一个对象数组：
 
-```
+```ts
 filterByTerm(arrOfLinks, "string3")
 
 // EXPECTED OUTPUT:
@@ -720,7 +721,7 @@ filterByTerm(arrOfLinks, "string3")
 
 但现在考虑一个更改的变体：
 
-```
+```ts
 function filterByTerm(
   input: Array<ILink>,
   searchTerm: string,
@@ -739,7 +740,7 @@ function filterByTerm(
 
 如果现在调用，使用相同的 `ILink` 数组和搜索词 `string3`，它将返回 `[object object]`
 
-```
+```ts
 filterByTerm(arrOfLinks, "string3")
 
 // WRONG OUTPUT:
@@ -750,7 +751,7 @@ filterByTerm(arrOfLinks, "string3")
 
 修正如下：
 
-```
+```ts
 function filterByTerm(/* 省略 */): Array<ILink> {
  /* 省略 */
 }
@@ -768,7 +769,7 @@ function filterByTerm(/* 省略 */): Array<ILink> {
 
 另一方面，`type` 也可以用来描述自定义的结构，但它只是一个别名，或者换句话说，是自定义类型的标签。例如，设想一个有两个字段的接口，其中一个是布尔型、数字型和字符串型的**联合类型**。
 
-```
+```ts
 interface IExample {
   authenticated: boolean | number | string
   name: string
@@ -777,7 +778,7 @@ interface IExample {
 
 例如，使用 `type` 别名 可以提取自定义联合类型，并创建名为 `Authenticated` 的标签
 
-```
+```ts
 type Authenticated = boolean | number | string
 
 interface IExample {
@@ -796,7 +797,7 @@ interface IExample {
 
 对象大多是键/值对的容器，它们也可以保存函数，这一点也不奇怪。当一个函数位于一个对象内部时，它可以通过关键字 `this` 访问“宿主”对象:
 
-```
+```ts
 const tom = {
   name: "看法是豆腐",
   city: "杭州",
@@ -809,7 +810,7 @@ const tom = {
 
 到目前为止，咱们已经看到 `TypeScript` 接口应用于简单对象，用于描述字符串和数字。 但是他们可以做的更多。 举个例， 使用以下代码创建一个名为 `interfaces-functions.ts` 的新文件：
 
-```
+```ts
 interface IPerson {
   name: string
   city: string
@@ -828,7 +829,7 @@ const tom: IPerson = {
 
 编译代码并查看报错信息：
 
-```
+``` bash
 interfaces-functions.ts:18:3 - error TS2322: Type '{ name: string city: string age: number printDetails: () => void }' is not assignable to type 'IPerson'.
   Object literal may only specify known properties, and 'printDetails' does not exist in type 'IPerson'.
 
@@ -843,7 +844,7 @@ interfaces-functions.ts:18:3 - error TS2322: Type '{ name: string city: string a
 
 **IPerson** 没有任何名为`printDetails`的属性，但更重要的是它应该是一个函数。幸运的是，`TypeScript` 接口也可以描述函数。如下所示：
 
-```
+```ts
 interface IPerson {
   name: string
   city: string
@@ -856,7 +857,7 @@ interface IPerson {
 
 实际上，打印到控制台的函数不会返回任何内容。 如果要从 `printDetails` 返回字符串，则可以将返回类型调整为 `string`：
 
-```
+```ts
 interface IPerson {
   name: string
   city: string
@@ -876,7 +877,7 @@ const tom: IPerson = {
 
 如果函数有参数呢? 在接口中，可以为它们添加类型注释
 
-```
+```ts
 interface IPerson {
   name: string
   city: string
